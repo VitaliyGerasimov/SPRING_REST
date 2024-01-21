@@ -59,6 +59,7 @@ public class UserServiceImpl implements UserService,UserDetailsService {
         return userRepository.findAll();
     }
 
+
     @Override
     @Transactional
     public void deleteUser(Long id) {
@@ -80,7 +81,7 @@ public class UserServiceImpl implements UserService,UserDetailsService {
             existingUser.setPassword(user.getPassword());
             existingUser.setRoles(user.getRoles());
             existingUser.setName(user.getName());
-            existingUser.setLast_name(user.getLast_name());
+            existingUser.setLastName(user.getLastName());
             entityManager.merge(existingUser);
         }
     }
@@ -89,5 +90,4 @@ public class UserServiceImpl implements UserService,UserDetailsService {
     public List<Role> getAllRoles() {
         return roleRepository.findAll();
     }
-
 }

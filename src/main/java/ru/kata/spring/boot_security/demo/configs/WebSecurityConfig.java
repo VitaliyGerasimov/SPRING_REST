@@ -11,17 +11,17 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import ru.kata.spring.boot_security.demo.service.UserServiceImpl;
+import ru.kata.spring.boot_security.demo.service.UserService;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final SuccessUserHandle successUserHandle;
-    private final UserServiceImpl userService;
+    private final UserService userService;
 
     @Autowired
     @Lazy
-    public WebSecurityConfig(SuccessUserHandle successUserHandle, UserServiceImpl userService) {
+    public WebSecurityConfig(SuccessUserHandle successUserHandle, UserService userService) {
         this.successUserHandle = successUserHandle;
         this.userService = userService;
     }
@@ -29,11 +29,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
 
+//        //тестирования REST
+//        http.csrf().disable()
+//                .authorizeRequests()
+//                .antMatchers("/**").permitAll()
+//                .anyRequest().authenticated();
+
+
+
+        http
+                .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/admin").hasRole("ADMIN")
-                .antMatchers("/user").hasAnyRole("ADMIN", "USER")
+                .antMatchers("/admin/**","/api/**").hasRole("ADMIN")
+                .antMatchers("/user","api/authorized_user/").hasAnyRole("ADMIN", "USER")
                 .antMatchers("/","/registration", "/login").permitAll()
                 .antMatchers("/css/bootstrap.min.css", "/js/bootstrap.bundle.min.js").permitAll()
                 .anyRequest().authenticated()
@@ -48,8 +57,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessUrl("/login?logout")
-                .and().csrf().disable();
+                .logoutSuccessUrl("/login?logout");
+
     }
 
     //настраиваем аутентификацию
